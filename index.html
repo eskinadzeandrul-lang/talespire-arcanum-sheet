@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Arcanum Character Sheet</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #1a1a2e;
+      color: #e6e6e6;
+      padding: 12px;
+      margin: 0;
+      font-size: 14px;
+    }
+    h1, h2, h3 {
+      margin: 8px 0;
+      color: #4cc9f0;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .header-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .header-row > div {
+      flex: 1;
+      min-width: 150px;
+    }
+    label {
+      display: block;
+      margin-top: 6px;
+      font-weight: bold;
+      color: #f8f9fa;
+    }
+    select, input[type="text"], input[type="number"] {
+      width: 100%;
+      padding: 4px;
+      background: #2d2d44;
+      color: white;
+      border: 1px solid #444;
+      border-radius: 4px;
+    }
+    .stats-container {
+      display: flex;
+      gap: 20px;
+      margin: 16px 0;
+    }
+    .stat-column {
+      flex: 1;
+    }
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 6px 0;
+      background: #2d2d44;
+      padding: 6px 10px;
+      border-radius: 4px;
+    }
+    .stat-label {
+      font-weight: bold;
+    }
+    .stat-value {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    button {
+      width: 24px;
+      height: 24px;
+      background: #4361ee;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:disabled {
+      background: #555;
+      cursor: not-allowed;
+    }
+    .points {
+      background: #3a0ca3;
+      padding: 8px;
+      border-radius: 6px;
+      margin: 12px 0;
+      text-align: center;
+      font-weight: bold;
+    }
+    .dice-section {
+      margin-top: 20px;
+      padding: 12px;
+      background: #2d2d44;
+      border-radius: 6px;
+    }
+    .combat-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .combat-row > div {
+      flex: 1;
+    }
+    .hp-mp {
+      display: flex;
+      gap: 12px;
+      margin: 12px 0;
+    }
+    .hp-mp div {
+      flex: 1;
+      text-align: center;
+      background: #3a0ca3;
+      padding: 8px;
+      border-radius: 6px;
+    }
+    .info {
+      font-size: 12px;
+      color: #aaa;
+      margin-top: 4px;
+    }
+    .capped {
+      color: #ff6b6b;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Arcanum Character Sheet</h1>
+
+    <!-- Header -->
+    <div class="header-row">
+      <div>
+        <label for="charName">Character Name</label>
+        <input type="text" id="charName" value="Unnamed"/>
+      </div>
+      <div>
+        <label for="race">Race</label>
+        <select id="race">
+          <option value="Human">Human</option>
+          <option value="Elf">Elf</option>
+          <option value="Gnome">Gnome</option>
+          <option value="Dwarf">Dwarf</option>
+          <option value="Half-Ogre">Half-Ogre</option>
+          <option value="Halfling">Halfling</option>
+          <option value="Half-Elf">Half-Elf</option>
+          <option value="Half-Orc">Half-Orc</option>
+        </select>
+      </div>
+      <div>
+        <label for="gender">Gender</label>
+        <select id="gender">
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+        </select>
+      </div>
+      <div>
+        <label for="level">Level (max 50)</label>
+        <input type="number" id="level" min="1" max="50" value="1"/>
+      </div>
+    </div>
+
+    <!-- Available Points -->
+    <div class="points" id="pointsDisplay">Available Points: 5</div>
+
+    <!-- Stats -->
+    <div class="stats-container">
+      <div class="stat-column">
+        <h2>Physical Stats</h2>
+        <div class="stat-row">
+          <span class="stat-label">Strength (SL)</span>
+          <div class="stat-value">
+            <button id="btn-str-minus" onclick="adjustBaseStat('strength', -1)">-</button>
+            <span id="strengthVal">8</span>
+            <button id="btn-str-plus" onclick="adjustBaseStat('strength', +1)">+</button>
+          </div>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Constitution (TS)</span>
+          <div class="stat-value">
+            <button id="btn-con-minus" onclick="adjustBaseStat('constitution', -1)">-</button>
+            <span id="constitutionVal">8</span>
+            <button id="btn-con-plus" onclick="adjustBaseStat('constitution', +1)">+</button>
+          </div>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Dexterity (LV)</span>
+          <div class="stat-value">
+            <button id="btn-dex-minus" onclick="adjustBaseStat('dexterity', -1)">-</button>
+            <span id="dexterityVal">8</span>
+            <button id="btn-dex-plus" onclick="adjustBaseStat('dexterity', +1)">+</button>
+          </div>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Beauty (KR)</span>
+          <div class="stat-value">
+            <button id="btn-bea-minus" onclick="adjustBaseStat('beauty', -1)">-</button>
+            <span id="beautyVal">8</span>
+            <button id="btn-bea-plus" onclick="adjustBaseStat('beauty', +1)">+</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="stat-column">
+        <h2>Mental Stats</h2>
+        <div class="stat-row">
+          <span class="stat-label">Intellect (IN)</span>
+          <div class="stat-value">
+            <button id="btn-int-minus" onclick="adjustBaseStat('intellect', -1)">-</button>
+            <span id="intellectVal">8</span>
+            <button id="btn-int-plus" onclick="adjustBaseStat('intellect', +1)">+</button>
+          </div>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Willpower (VL)</span>
+          <div class="stat-value">
+            <button id="btn-wil-minus" onclick="adjustBaseStat('willpower', -1)">-</button>
+            <span id="willpowerVal">8</span>
+            <button id="btn-wil-plus" onclick="adjustBaseStat('willpower', +1)">+</button>
+          </div>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Perception (VS)</span>
+          <div class="stat-value">
+            <button id="btn-per-minus" onclick="adjustBaseStat('perception', -1)">-</button>
+            <span id="perceptionVal">8</span>
+            <button id="btn-per-plus" onclick="adjustBaseStat('perception', +1)">+</button>
+          </div>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Charisma (OB)</span>
+          <div class="stat-value">
+            <button id="btn-cha-minus" onclick="adjustBaseStat('charisma', -1)">-</button>
+            <span id="charismaVal">8</span>
+            <button id="btn-cha-plus" onclick="adjustBaseStat('charisma', +1)">+</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HP / MP -->
+    <div class="hp-mp">
+      <div>
+        <div>HP: <span id="hpVal">30</span></div>
+        <div class="info">SL×2 + VL×1 + 6 + 2×(Level−1)</div>
+      </div>
+      <div>
+        <div>MP: <span id="mpVal">30</span></div>
+        <div class="info">TS×2 + VL×1 + 6 + 2×(Level−1)</div>
+      </div>
+    </div>
+
+    <!-- Dice Roller -->
+    <div class="dice-section">
+      <h3>Weapon Damage Roll</h3>
+      <div class="combat-row">
+        <div>
+          <label>Weapon (e.g. "Fist", "Longsword")</label>
+          <input type="text" id="weaponName" value="Fist"/>
+        </div>
+        <div>
+          <label>Damage Dice (e.g. 1d8, 2d6)</label>
+          <input type="text" id="damageDice" placeholder="1d6" value="1d4"/>
+        </div>
+      </div>
+      <button style="width:auto; margin-top:10px;" onclick="rollDamage()">Roll Damage</button>
+      <div id="damageResult" style="margin-top:8px; min-height:20px; font-weight:bold;"></div>
+    </div>
+  </div>
+
+  <script>
+    // Core state
+    let state = {
+      name: "Unnamed",
+      race: "Human",
+      gender: "Male",
+      level: 1,
+      baseStats: {
+        strength: 8,
+        constitution: 8,
+        dexterity: 8,
+        beauty: 8,
+        intellect: 8,
+        willpower: 8,
+        perception: 8,
+        charisma: 8
+      },
+      usedPoints: 0
+    };
+
+    const raceModifiers = {
+      "Human": {},
+      "Elf": { dexterity: +2, willpower: +1, beauty: +1, constitution: -2, strength: -1 },
+      "Gnome": { willpower: +2, constitution: -2 },
+      "Dwarf": { strength: +1, constitution: +1, charisma: -1, dexterity: -1 },
+      "Half-Ogre": { strength: +4, beauty: -1, intellect: -4 },
+      "Halfling": { dexterity: +2, strength: -3 },
+      "Half-Elf": { dexterity: +1, beauty: +1, constitution: -1, strength: -1 },
+      "Half-Orc": { constitution: +1, strength: +1, beauty: -2, charisma: -2 }
+    };
+
+    const genderModifiers = {
+      "Male": {},
+      "Female": { strength: -1, constitution: +1 }
+    };
+
+    function loadState() {
+      const saved = localStorage.getItem('arcSheet');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (!parsed.baseStats) {
+          parsed.baseStats = {
+            strength: 8, constitution: 8, dexterity: 8, beauty: 8,
+            intellect: 8, willpower: 8, perception: 8, charisma: 8
+          };
+          const keys = ['strength','constitution','dexterity','beauty','intellect','willpower','perception','charisma'];
+          for (let key of keys) {
+            if (parsed[key] !== undefined) parsed.baseStats[key] = parsed[key];
+          }
+        }
+        Object.assign(state, parsed);
+        // Enforce level cap
+        state.level = Math.min(50, Math.max(1, state.level));
+      }
+      render();
+    }
+
+    function saveState() {
+      localStorage.setItem('arcSheet', JSON.stringify(state));
+    }
+
+    function getTotalModifiers() {
+      const mods = { ...raceModifiers[state.race] };
+      const genderMod = genderModifiers[state.gender] || {};
+      for (let key in genderMod) {
+        mods[key] = (mods[key] || 0) + genderMod[key];
+      }
+      return mods;
+    }
+
+    function getFinalStat(base, mod) {
+      return Math.min(20, base + mod);
+    }
+
+    function getFinalStats() {
+      const base = state.baseStats;
+      const mods = getTotalModifiers();
+      const final = {};
+      for (let key in base) {
+        final[key] = getFinalStat(base[key], mods[key] || 0);
+      }
+      return final;
+    }
+
+    function calculateAvailablePoints() {
+      let base = 5;
+      const extraLevels = state.level - 1;
+      for (let i = 1; i <= extraLevels; i++) {
+        if (i % 5 === 0) base += 2;
+        else base += 1;
+      }
+      const available = base - state.usedPoints;
+      document.getElementById('pointsDisplay').textContent = `Available Points: ${available}`;
+      return available;
+    }
+
+    function validateGenderRace() {
+      if ((state.race === "Dwarf" || state.race === "Half-Ogre") && state.gender === "Female") {
+        state.gender = "Male";
+        document.getElementById('gender').value = "Male";
+      }
+    }
+
+    function updateDerived() {
+      const final = getFinalStats();
+      const levelBonus = 2 * (state.level - 1); // +2 HP/MP per level after 1
+      const hp = final.strength * 2 + final.willpower * 1 + 6 + levelBonus;
+      const mp = final.constitution * 2 + final.willpower * 1 + 6 + levelBonus;
+      document.getElementById('hpVal').textContent = hp;
+      document.getElementById('mpVal').textContent = mp;
+    }
+
+    function canIncreaseBaseStat(statName) {
+      const currentBase = state.baseStats[statName];
+      const mods = getTotalModifiers();
+      const modValue = mods[statName] || 0;
+      const newBase = currentBase + 1;
+      return (newBase + modValue) <= 20;
+    }
+
+    function adjustBaseStat(statName, delta) {
+      const available = calculateAvailablePoints();
+      const currentBase = state.baseStats[statName];
+      const newBase = currentBase + delta;
+
+      if (newBase < 8) return;
+      if (delta > 0 && available <= 0) return;
+      if (delta > 0 && !canIncreaseBaseStat(statName)) return;
+
+      state.baseStats[statName] = newBase;
+      state.usedPoints += delta;
+
+      render();
+      saveState();
+    }
+
+    function renderStats() {
+      const base = state.baseStats;
+      const mods = getTotalModifiers();
+      const stats = ['strength', 'constitution', 'dexterity', 'beauty', 'intellect', 'willpower', 'perception', 'charisma'];
+      
+      for (let stat of stats) {
+        const modValue = mods[stat] || 0;
+        const final = getFinalStat(base[stat], modValue);
+        const el = document.getElementById(`${stat}Val`);
+        el.textContent = final;
+        el.className = final === 20 ? 'capped' : '';
+
+        const plusBtn = document.getElementById(`btn-${stat.slice(0,3)}-plus`);
+        const minusBtn = document.getElementById(`btn-${stat.slice(0,3)}-minus`);
+        plusBtn.disabled = !canIncreaseBaseStat(stat);
+        minusBtn.disabled = base[stat] <= 8;
+      }
+    }
+
+    function render() {
+      // Enforce level cap
+      state.level = Math.min(50, Math.max(1, state.level));
+      
+      document.getElementById('charName').value = state.name;
+      document.getElementById('race').value = state.race;
+      document.getElementById('gender').value = state.gender;
+      document.getElementById('level').value = state.level;
+
+      validateGenderRace();
+      calculateAvailablePoints();
+      renderStats();
+      updateDerived();
+    }
+
+    document.getElementById('charName').addEventListener('input', (e) => { state.name = e.target.value; saveState(); });
+    document.getElementById('race').addEventListener('change', (e) => { state.race = e.target.value; validateGenderRace(); render(); saveState(); });
+    document.getElementById('gender').addEventListener('change', (e) => { state.gender = e.target.value; validateGenderRace(); render(); saveState(); });
+    document.getElementById('level').addEventListener('input', (e) => {
+      let val = parseInt(e.target.value) || 1;
+      val = Math.max(1, Math.min(50, val)); // Clamp to [1, 50]
+      state.level = val;
+      e.target.value = val;
+      render();
+      saveState();
+    });
+
+    function rollDamage() {
+      const weapon = document.getElementById('weaponName').value.trim();
+      const diceNotation = document.getElementById('damageDice').value.trim();
+      const resultEl = document.getElementById('damageResult');
+
+      const diceMatch = diceNotation.match(/^(\d+)d(\d+)$/i);
+      if (!diceMatch) {
+        resultEl.textContent = "Invalid dice format (e.g., 1d6, 2d8)";
+        return;
+      }
+      const count = parseInt(diceMatch[1]);
+      const sides = parseInt(diceMatch[2]);
+      if (count < 1 || sides < 1) {
+        resultEl.textContent = "Invalid dice values";
+        return;
+      }
+
+      let total = 0;
+      for (let i = 0; i < count; i++) {
+        total += Math.floor(Math.random() * sides) + 1;
+      }
+
+      const final = getFinalStats();
+      const sl = final.strength;
+      let dmgBonus = sl >= 20 ? 10 : 
+                    sl >= 18 ? 4 :
+                    sl >= 16 ? 3 :
+                    sl >= 14 ? 2 :
+                    sl >= 12 ? 1 :
+                    sl >= 10 ? 0 : -1;
+
+      let finalDamage = total + dmgBonus;
+      const isFist = weapon.toLowerCase() === "fist";
+      const maxDiceRoll = count * sides;
+
+      if (!isFist && finalDamage > maxDiceRoll) {
+        finalDamage = maxDiceRoll;
+      }
+
+      resultEl.innerHTML = `Rolled: <b>${total}</b> + ${dmgBonus >= 0 ? '+' : ''}${dmgBonus} = <b>${finalDamage}</b>`;
+    }
+
+    loadState();
+  </script>
+</body>
+</html>
