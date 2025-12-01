@@ -2,7 +2,8 @@
   "name": "Arcanum Character Sheet",
   "description": "Editable character sheet for Arcanum RPG system with race, gender, level, and stat allocation.",
   "version": "1.0.0",
-  "author": "Andrul",
+  "author": "eskinadzeandrul",
   "main": "index.html",
   "apiVersion": "1.0"
+
 }
