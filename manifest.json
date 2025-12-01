@@ -1,9 +1,8 @@
 {
   "name": "Arcanum Character Sheet",
-  "description": "Editable character sheet for Arcanum RPG system with race, gender, level, and stat allocation.",
+  "description": "Full-featured character sheet for Arcanum RPG. Supports race, gender, level up to 50, stat cap at 20, HP/MP scaling, and smart damage rolling.",
   "version": "1.0.0",
   "author": "eskinadzeandrul-lang",
   "main": "index.html",
   "apiVersion": "1.0"
-
 }
